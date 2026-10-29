@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATELIER ( 1 )</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        html { scrollbar-width:none; -ms-overflow-style:none; }
+        html::-webkit-scrollbar { display:none; width:0; height:0; }
+        .home-main { width:100%; max-width:none; min-height:calc(100vh - 52px); margin:0; padding:40px 5vw; border:0; font-family:'Century Schoolbook',Georgia,serif; background:linear-gradient(rgba(8,8,8,.32),rgba(8,8,8,.5)),url('balls.jpg'); background-size:cover; background-position:center; }
+        .home-main::before { display:none; }
+        .home-brand { position:absolute; z-index:1; top:42%; left:5vw; width:30%; text-align:left; transform:translateY(-50%); pointer-events:none; }
+        .home-brand h1 { width:100%; margin:0; color:rgba(250,242,213,.92); font:700 clamp(58px,7vw,105px)/.82 'Century Schoolbook',Georgia,serif; letter-spacing:-.07em; text-align:left; white-space:normal; }
+        .home-brand p { margin:14px 0 0; color:rgba(232,222,185,.76); font:11px 'Space Mono','Courier New',monospace; letter-spacing:.1em; text-align:left; }
+        .home-brand-right { left:auto; right:5vw; text-align:right; }
+        .home-brand-right h1, .home-brand-right p { text-align:right; }
+        .home-main .interactive-hub { position:relative; z-index:2; }
+        .home-navigation-copy { position:relative; z-index:2; margin-top:auto; }
+        .home-main .radial-item:nth-child(1) { transform:translate(0,-265px); }
+        .home-main .radial-item:nth-child(2) { transform:translate(230px,0); }
+        .home-main .radial-item:nth-child(3) { transform:translate(0,265px); }
+        .home-main .radial-item:nth-child(4) { transform:translate(-230px,0); }
+        .home-main .interactive-hub:hover .radial-item:nth-child(1) { transform:translate(0,-265px); }
+        .home-main .interactive-hub:hover .radial-item:nth-child(2) { transform:translate(230px,0); }
+        .home-main .interactive-hub:hover .radial-item:nth-child(3) { transform:translate(0,265px); }
+        .home-main .interactive-hub:hover .radial-item:nth-child(4) { transform:translate(-230px,0); }
+        @media screen and (max-width:700px) {
+            .home-main .interactive-hub:hover .radial-item:nth-child(1) { transform:translate(0,-165px); }
+            .home-main .interactive-hub:hover .radial-item:nth-child(2) { transform:translate(145px,0); }
+            .home-main .interactive-hub:hover .radial-item:nth-child(3) { transform:translate(0,165px); }
+            .home-main .interactive-hub:hover .radial-item:nth-child(4) { transform:translate(-145px,0); }
+        }
+        .home-main .radial-item:first-child { color:#fff; background:#c41616; border-color:#e43b3b; }
+        .home-main .radial-item:first-child:hover { color:#fff; background:#ed2929; border-color:#ff5a5a; }
+        .about-address { margin-top:12px; padding-top:16px; border-top:1px solid rgba(255,255,255,.22); }
+        .about-address h3 { margin-bottom:6px; color:#fff; font:700 20px 'PT Serif',Georgia,serif; }
+        .about-address p { margin:0 !important; font-size:16px !important; text-align:left !important; }
+        .about-details { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:12px; }
+        .about-contact { margin-top:12px; padding-top:16px; border-top:1px solid rgba(255,255,255,.22); }
+        .about-contact h3 { margin-bottom:6px; color:#fff; font:700 20px 'PT Serif',Georgia,serif; }
+        .about-contact p { margin:0 !important; font-size:16px !important; text-align:left !important; overflow-wrap:anywhere; }
+        @media screen and (max-width:600px) { .about-details { grid-template-columns:1fr; gap:0; } }
+        .welcome-overlay { position:fixed; inset:0; z-index:1000; display:grid; place-items:center; background:#050505; pointer-events:auto; animation:welcome-overlay-out 2.8s ease 1.2s forwards; }
+        .welcome-overlay h1 { margin:0; color:#f7f1dd; font:700 clamp(100px,22vw,330px)/.72 'Century Schoolbook',Georgia,serif; letter-spacing:-.1em; transform:translateY(0); opacity:0; animation:welcome-title 2.8s ease forwards; }
+        @keyframes welcome-title { 0% { opacity:0; transform:translateY(0) scale(.96); } 22%,58% { opacity:1; transform:translateY(0) scale(1); } 100% { opacity:0; transform:translateY(0) scale(1.02); } }
+        @keyframes welcome-overlay-out { 0% { opacity:1; } 70%,100% { opacity:0; visibility:hidden; } }
+        body.welcome-active { overflow:hidden; }
+    </style>
+</head>
+<body>
+
+    <div class="welcome-overlay" id="welcome-overlay" role="status" aria-label="Welcome to Atelier">
+        <h1>Atelier</h1>
+    </div>
+
+    <audio id="site-audio" loop preload="auto" autoplay>
+        <source src="song.mp3" type="audio/mpeg">
+    </audio>
+
+    <nav class="nav-bar">
+        <a href="index.html">HOME</a>
+        <span class="barrier">|</span>
+        <a href="products.html">PRODUCTS</a>
+    </nav>
+
+    <main class="main-content home-main">
+        <button class="audio-toggle" type="button" aria-label="Putar atau hentikan musik" aria-pressed="false">Musik berhenti</button>
+        <div class="home-brand">
+            <h1>Atelier</h1>
+            <p>Seni, terbarui.</p>
+        </div>
+        <div class="home-brand home-brand-right" aria-hidden="true">
+            <h1>Seni</h1>
+            <p>Dibentuk, diapresiasi.</p>
+        </div>
+        <!-- Interactive Hub Container -->
+        <div class="interactive-hub">
+            <!-- Large Rotating Disk -->
+            <div class="rotating-disk">
+            </div>
+
+            <!-- Radial Node Menu -->
+            <div class="radial-menu">
+                <a href="products.html" class="radial-item">Produk</a>
+                <a href="#about-contact" class="radial-item">Kontak</a>
+                <a href="gallery.html" class="radial-item">Galeri</a>
+                <a href="#about" class="radial-item">Info</a>
+            </div>
+        </div>
+        <div class="home-navigation-copy">
+            <h2>Navigasi</h2>
+            <p>Arahkan kursor ke disk untuk menjelajahi berbagai bagian situs.</p>
+        </div>
+    </main>
+
+    <section class="about-section" id="about" aria-labelledby="about-title">
+        <div class="about-title">
+            <h2 id="about-title">About<br>Us</h2>
+        </div>
+        <button class="about-art-frame" id="about-open" type="button" aria-label="Open more about Atelier">
+            <img src="aboutuspaint.png" alt="Framed artwork of a bird and tree">
+        </button>
+        <div class="about-copy">
+            <p>Atelier adalah ruang eksplorasi seni, ide, dan apresiasi karya melalui E-marketplace.</p>
+        </div>
+    </section>
+
+    <div class="about-overlay" id="about-overlay" aria-hidden="true">
+        <section class="about-overlay-panel" role="dialog" aria-modal="true" aria-labelledby="about-overlay-title">
+            <h2 id="about-overlay-title">About Us</h2>
+            <p>Atelier adalah ruang eksplorasi seni, ide, dan apresiasi karya melalui E-marketplace. Dibuat oleh Abdullah Pasai dari kelas 11-5 sebagai proyek
+                akhir pembelajaran informatika. Tujuan dari proyek ini adalah untuk memberikan pengalaman interaktif bagi pengguna dalam menjelajahi berbagai 
+                aspek seni dan kreativitas, sembari mengapresiasi kreator dengan pembelian hasil karya mereka. Dengan menggabungkan elemen visual, 
+                audio, dan interaktivitas, Atelier bertujuan untuk menciptakan pengalaman yang mendalam dan menyenangkan bagi pengunjungnya.
+            </p>
+            <div class="about-details">
+                <div class="about-address">
+                    <h3>Alamat</h3>
+                    <p>Jl. Tanjung Sari Asri, Antapani</p>
+                </div>
+                <div class="about-contact" id="about-contact">
+                    <h3>Contact</h3>
+                    <p><a href="mailto:howithappen2@gmail.com">howithappen2@gmail.com</a></p>
+                </div>
+            </div>
+            <button class="about-overlay-close" id="about-close" type="button">Tutup</button>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p>ATELIER - TUGAS INFORMATIKA</p>
+        <p>Seni, Diperbarui.</p>
+    </footer>
+
+    <script>
+        (() => {
+            const overlay = document.getElementById('welcome-overlay');
+            document.body.classList.add('welcome-active');
+            const dismiss = () => {
+                overlay.remove();
+                document.body.classList.remove('welcome-active');
+            };
+            overlay.addEventListener('animationend', (event) => {
+                if (event.animationName === 'welcome-overlay-out') dismiss();
+            });
+            window.setTimeout(dismiss, 4500);
+        })();
+    </script>
+    <script>
+        (() => {
+            const audio = document.getElementById('site-audio');
+            const toggle = document.querySelector('.audio-toggle');
+            const savedState = localStorage.getItem('atelier-audio-muted') === 'true';
+            audio.muted = savedState;
+            const updateToggle = () => {
+                const playing = !audio.paused && !audio.muted;
+                toggle.classList.toggle('is-playing', playing);
+                toggle.textContent = playing ? 'Musik bermain' : 'Musik berhenti';
+                toggle.setAttribute('aria-pressed', String(playing));
+            };
+            const startAudio = () => { if (!audio.muted) audio.play().catch(() => {}); };
+            toggle.addEventListener('click', () => {
+                if (audio.paused || audio.muted) {
+                    audio.muted = false;
+                    localStorage.setItem('atelier-audio-muted', 'false');
+                    startAudio();
+                } else {
+                    audio.pause();
+                    audio.muted = true;
+                    localStorage.setItem('atelier-audio-muted', 'true');
+                }
+                updateToggle();
+            });
+            audio.addEventListener('play', updateToggle);
+            audio.addEventListener('pause', updateToggle);
+            document.addEventListener('pointerdown', startAudio, { once: true });
+            startAudio();
+            updateToggle();
+        })();
+    </script>
+    <script>
+        (() => {
+            const openButton = document.getElementById('about-open');
+            const overlay = document.getElementById('about-overlay');
+            const closeButton = document.getElementById('about-close');
+            const setOverlay = (visible) => {
+                overlay.classList.toggle('is-visible', visible);
+                overlay.setAttribute('aria-hidden', String(!visible));
+                document.body.style.overflow = visible ? 'hidden' : '';
+                if (visible) closeButton.focus();
+            };
+            openButton.addEventListener('click', () => setOverlay(true));
+            document.querySelector('.radial-item[href="#about"]').addEventListener('click', (event) => {
+                event.preventDefault();
+                setOverlay(true);
+            });
+            document.querySelector('.radial-item[href="#about-contact"]').addEventListener('click', (event) => {
+                event.preventDefault();
+                setOverlay(true);
+                window.setTimeout(() => document.getElementById('about-contact').scrollIntoView({ behavior: 'smooth', block: 'center' }), 80);
+            });
+            closeButton.addEventListener('click', () => setOverlay(false));
+            overlay.addEventListener('click', (event) => {
+                if (event.target === overlay) setOverlay(false);
+            });
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') setOverlay(false);
+            });
+        })();
+    </script>
+</body>
+</html>

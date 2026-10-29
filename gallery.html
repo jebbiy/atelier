@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atelier — Rollins Museum Virtual Visit</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body.gallery-page { padding-bottom:0; font-family:'Century Schoolbook',Georgia,serif; }
+        .museum-header { background:rgba(10,10,10,.92); border-bottom:1px solid #1f1f1f; padding:24px 20px; text-align:center; position:relative; }
+        .museum-header h1 { color:#fff; font-family:'Century Schoolbook',Georgia,serif; font-size:34px; font-weight:700; letter-spacing:.08em; }
+        .museum-header p { margin-top:8px; color:#888; font:11px 'Space Mono','Courier New',monospace; letter-spacing:.12em; }
+        .museum-shell { width:100%; max-width:none; min-height:calc(100vh - 126px); margin:0; padding:32px 5vw; border:0; background:linear-gradient(rgba(0,0,0,.38),rgba(0,0,0,.58)),url('dna.gif'); background-size:cover; background-position:center; box-shadow:none; position:relative; }
+        .gallery-landing { display:grid; grid-template-columns:1fr minmax(260px,360px) 1fr; align-items:center; gap:50px; min-height:calc(100vh - 190px); padding:45px 0; }
+        .gallery-landing h2 { margin:0; color:#fff; font:700 clamp(42px,5.5vw,88px)/.82 'Century Schoolbook',Georgia,serif; letter-spacing:-.07em; text-align:left; }
+        .gallery-landing h2:last-child { text-align:right; }
+        .gallery-door { position:relative; width:100%; aspect-ratio:2 / 3; padding:0; border:0; background:transparent; box-shadow:none; cursor:pointer; transition:transform .25s ease,filter .25s ease; }
+        .gallery-door img { position:absolute; inset:0; display:block; width:100%; height:100%; object-fit:cover; object-position:center top; filter:drop-shadow(0 12px 12px rgba(0,0,0,.58)); }
+        .gallery-door:hover { filter:brightness(1.25); transform:scale(1.04); }
+        .gallery-door-label { position:absolute; inset:0; display:grid; place-items:center; color:transparent; font:12px 'Space Mono','Courier New',monospace; }
+        .gallery-home-button { display:block; width:max-content; margin:10px auto 0; padding:11px 26px; color:#111; background:#fff; border:1px solid #fff; border-radius:999px; font:11px 'Space Mono','Courier New',monospace; text-decoration:none; transition:.2s ease; }
+        .gallery-home-button:hover { color:#fff; background:#e00000; border-color:#e00000; }
+        .museum-overlay { position:fixed; z-index:40; inset:0; display:grid; place-items:center; padding:32px; background:linear-gradient(rgba(0,0,0,.72),rgba(0,0,0,.84)),url('natureflat.gif'); background-size:cover; background-position:center; opacity:0; visibility:hidden; pointer-events:none; transition:opacity .25s ease,visibility .25s ease; }
+        .museum-overlay.is-visible { opacity:1; visibility:visible; pointer-events:auto; }
+        .museum-overlay-panel { position:relative; display:flex; flex-direction:column; width:min(1120px,100%); height:min(82vh,780px); padding:28px; background:rgba(0,0,0,.72); border:1px solid rgba(255,255,255,.45); box-shadow:0 20px 60px rgba(0,0,0,.8); }
+        .museum-overlay-panel::before { content:'Interactive museum'; display:block; margin:0 0 14px; color:#fff; font:700 clamp(30px,4vw,56px)/.9 'PT Serif','Century Schoolbook',Georgia,serif; letter-spacing:-.04em; }
+        .museum-overlay-panel iframe { flex:1; width:100%; min-height:0; border:1px solid rgba(255,255,255,.28); background:#111; }
+        .museum-overlay-close { position:absolute; z-index:2; top:18px; right:18px; padding:11px 26px; color:#111; background:#fff; border:1px solid #fff; border-radius:999px; font:11px 'Space Mono','Courier New',monospace; cursor:pointer; }
+        .museum-overlay-close:hover { color:#fff; background:#e00000; border-color:#e00000; }
+        .tour-tabs { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:0 auto 18px; }
+        .tour-tabs a { padding:9px 12px; color:#aaa; border:1px solid #333; font:10px 'Space Mono','Courier New',monospace; letter-spacing:.05em; text-decoration:none; transition:.2s ease; }
+        .tour-tabs a:hover,.tour-tabs a.active { color:#000; background:#fff; border-color:#fff; }
+        .tour-tabs .home-button { padding:11px 22px; color:#000; background:#fff; border-color:#fff; border-radius:999px; }
+        .tour-tabs .home-button:hover { color:#fff; background:#e00000; border-color:#e00000; }
+        .tour-frame { position:relative; height:min(72vh,760px); min-height:480px; overflow:hidden; border:1px solid #444; background:#111; box-shadow:0 15px 35px rgba(0,0,0,.8); }
+        .tour-frame iframe { width:100%; height:100%; border:0; background:#111; }
+        .tour-credit { display:flex; justify-content:space-between; gap:16px; margin-top:12px; color:#666; font:10px 'Space Mono','Courier New',monospace; letter-spacing:.04em; }
+        .tour-credit a { color:#aaa; }
+        @media (max-width:700px) { .museum-shell { width:100%; padding:20px 12px; } .museum-header h1 { font-size:25px; } .gallery-landing { grid-template-columns:1fr; gap:42px; min-height:calc(100vh - 205px); padding:50px 10px; } .gallery-landing h2 { font-size:48px; } .gallery-landing h2:last-child { text-align:right; } .gallery-door { width:min(260px,70vw); justify-self:center; } .museum-overlay { padding:16px; } .museum-overlay-panel { height:90vh; padding:16px; } .museum-overlay-panel::before { margin-bottom:12px; } .museum-overlay-close { top:12px; right:12px; padding:9px 17px; } }
+    </style>
+</head>
+<body class="gallery-page">
+    <audio id="site-audio" loop preload="auto" autoplay>
+        <source src="song.mp3" type="audio/mpeg">
+    </audio>
+    <header class="museum-header">
+        <button class="audio-toggle" type="button" aria-label="Putar atau hentikan musik" aria-pressed="false">Musik berhenti</button>
+        <h1>Galeri Virtual</h1>
+        <p>Rollins Museum of Art</p>
+    </header>
+
+    <main class="museum-shell">
+        <section class="gallery-landing" aria-labelledby="gallery-landing-title">
+            <h2 id="gallery-landing-title">Masuk<br>ke Dalam</h2>
+            <button class="gallery-door" id="museum-open" type="button" aria-label="Open interactive museum">
+                <img src="door.png" alt="Blue museum door">
+                <span class="gallery-door-label">Open museum</span>
+            </button>
+            <h2>Seni<br>Interaktif</h2>
+        </section>
+        <a class="gallery-home-button" href="index.html">Beranda</a>
+    </main>
+
+    <div class="museum-overlay" id="museum-overlay" aria-hidden="true">
+        <section class="museum-overlay-panel" role="dialog" aria-modal="true" aria-label="Interactive Rollins Museum of Art">
+            <button class="museum-overlay-close" id="museum-close" type="button" aria-label="Close interactive museum">×</button>
+            <iframe src="https://my.matterport.com/show/?m=mAakjXhNDET" title="Rollins Museum of Art virtual exhibition tour" allow="fullscreen; xr-spatial-tracking" loading="lazy"></iframe>
+        </section>
+    </div>
+
+    <script>
+        (() => {
+            const openButton = document.getElementById('museum-open');
+            const overlay = document.getElementById('museum-overlay');
+            const closeButton = document.getElementById('museum-close');
+            const setOverlay = (visible) => {
+                overlay.classList.toggle('is-visible', visible);
+                overlay.setAttribute('aria-hidden', String(!visible));
+                document.body.style.overflow = visible ? 'hidden' : '';
+                if (visible) closeButton.focus();
+            };
+            openButton.addEventListener('click', () => setOverlay(true));
+            closeButton.addEventListener('click', () => setOverlay(false));
+            overlay.addEventListener('click', (event) => {
+                if (event.target === overlay) setOverlay(false);
+            });
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') setOverlay(false);
+            });
+        })();
+    </script>
+
+    <script>
+        (() => {
+            const audio = document.getElementById('site-audio');
+            const toggle = document.querySelector('.audio-toggle');
+            const savedState = localStorage.getItem('atelier-audio-muted') === 'true';
+            audio.muted = savedState;
+            const updateToggle = () => {
+                const playing = !audio.paused && !audio.muted;
+                toggle.classList.toggle('is-playing', playing);
+                toggle.textContent = playing ? 'Musik bermain' : 'Musik berhenti';
+                toggle.setAttribute('aria-pressed', String(playing));
+            };
+            const startAudio = () => { if (!audio.muted) audio.play().catch(() => {}); };
+            toggle.addEventListener('click', () => {
+                if (audio.paused || audio.muted) {
+                    audio.muted = false;
+                    localStorage.setItem('atelier-audio-muted', 'false');
+                    startAudio();
+                } else {
+                    audio.pause();
+                    audio.muted = true;
+                    localStorage.setItem('atelier-audio-muted', 'true');
+                }
+                updateToggle();
+            });
+            audio.addEventListener('play', updateToggle);
+            audio.addEventListener('pause', updateToggle);
+            document.addEventListener('pointerdown', startAudio, { once: true });
+            startAudio();
+            updateToggle();
+        })();
+    </script>
+
+</body>
+</html>

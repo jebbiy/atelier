@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atelier Shop</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body.shop-page { background:#050505; color:#fff; }
+        .shop-banner { position:relative; display:flex; align-items:flex-start; justify-content:flex-end; min-height:100vh; width:100%; max-width:none; margin:0; padding:40px 12vw 15vh; overflow:hidden; background-color:#050505; background-image:linear-gradient(to bottom,rgba(0,0,0,.35) 42%,rgba(5,5,5,.5) 66%,#050505 100%),url('bonfire.gif'); background-size:cover; background-position:center; border:0; }
+        .shop-wordmark { display:flex; align-items:baseline; gap:16px; }
+        .shop-banner h1 { margin:0; color:#d8d2c5; font:700 clamp(150px,27vw,420px)/.72 'PT Serif',Georgia,serif; letter-spacing:-.1em; }
+        .shop-banner span { margin:0; color:#d8d2c5; font:700 clamp(24px,4vw,58px)/1 'PT Serif',Georgia,serif; letter-spacing:-.07em; }
+        .shop-banner::before,
+        .shop-banner::after { display:none; }
+        .shop-home-button { position:absolute; z-index:2; top:42px; right:5vw; padding:10px 22px; color:#111; background:rgba(216,210,197,.94); border:1px solid #d8d2c5; border-radius:999px; font:11px 'Space Mono','Courier New',monospace; text-decoration:none; transition:.2s ease; }
+        .shop-home-button:hover { color:#d8d2c5; background:#111; border-color:#d8d2c5; }
+        .shop-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; width:96%; max-width:1500px; margin:24px auto 40px; }
+        .product-card { min-height:390px; padding:18px; display:flex; flex-direction:column; justify-content:space-between; background:#0b0b0b; border:1px solid #292929; transition:transform .2s ease,border-color .2s ease; }
+        .product-card:hover { transform:translateY(-5px); border-color:#777; }
+        .product-card figure { height:260px; display:grid; place-items:center; overflow:hidden; background:#111; }
+        .product-card img { width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 15px 12px rgba(0,0,0,.65)); }
+        .product-card h3 { margin-top:18px; color:#fff; font:700 25px/.95 'PT Serif',Georgia,serif; }
+        .product-card p { margin-top:8px; color:#888; font:12px/1.35 'Space Mono','Courier New',monospace; }
+        .product-card a { align-self:flex-start; margin-top:18px; padding:10px 18px; color:#111; background:#fff; border-radius:999px; font:11px 'Space Mono','Courier New',monospace; text-decoration:none; }
+        .product-card a:hover { color:#fff; background:#e00000; }
+        .shop-back { display:block; width:max-content; margin:0 auto 44px; padding:11px 25px; color:#111; background:#fff; border-radius:999px; font:11px 'Space Mono','Courier New',monospace; text-decoration:none; }
+        .shop-back:hover { color:#fff; background:#e00000; }
+        .gallery-copy { position:relative; width:92%; max-width:1500px; height:300px; margin:50px auto; padding:24px 5vw; overflow:hidden; background:linear-gradient(rgba(0,0,0,.38),rgba(0,0,0,.58)),url('dna.gif'); background-size:cover; background-position:center; border:1px solid #222; box-shadow:0 35px 70px rgba(0,0,0,.8); }
+        .gallery-copy-landing { display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:50px; height:100%; }
+        .gallery-copy-landing h2 { margin:0; color:#fff; font:700 clamp(42px,5.5vw,88px)/.82 'Century Schoolbook',Georgia,serif; letter-spacing:-.07em; text-align:left; }
+        .gallery-copy-landing h2:last-child { text-align:right; }
+        .gallery-copy-door { position:relative; width:100%; aspect-ratio:2 / 3; padding:0; border:0; background:transparent; cursor:pointer; }
+        .gallery-copy-door img { position:absolute; inset:0; display:block; width:100%; height:100%; object-fit:cover; object-position:center top; filter:drop-shadow(0 12px 12px rgba(0,0,0,.58)); }
+        .gallery-copy-overlay { position:fixed; z-index:40; inset:0; display:grid; place-items:center; padding:32px; background:linear-gradient(rgba(0,0,0,.72),rgba(0,0,0,.84)),url('natureflat.gif'); background-size:cover; background-position:center; opacity:0; visibility:hidden; pointer-events:none; transition:opacity .25s ease,visibility .25s ease; }
+        .gallery-copy-overlay.is-visible { opacity:1; visibility:visible; pointer-events:auto; }
+        .gallery-copy-panel { position:relative; display:flex; flex-direction:column; width:min(1120px,100%); height:min(82vh,780px); padding:28px; background:rgba(0,0,0,.72); border:1px solid rgba(255,255,255,.45); box-shadow:0 20px 60px rgba(0,0,0,.8); }
+        .gallery-copy-panel::before { content:'Interactive museum'; display:block; margin:0 0 14px; color:#fff; font:700 clamp(30px,4vw,56px)/.9 'PT Serif','Century Schoolbook',Georgia,serif; letter-spacing:-.04em; }
+        .gallery-copy-panel iframe { flex:1; width:100%; min-height:0; border:1px solid rgba(255,255,255,.28); background:#111; }
+        .gallery-copy-close { position:absolute; z-index:2; top:18px; right:18px; padding:11px 26px; color:#111; background:#fff; border:1px solid #fff; border-radius:999px; font:11px 'Space Mono','Courier New',monospace; cursor:pointer; }
+        .gallery-copy-close:hover { color:#fff; background:#e00000; border-color:#e00000; }
+        .product-categories { display:flex; flex-direction:column; gap:18px; width:92%; max-width:1500px; margin:50px auto 70px; }
+        .product-category { padding:22px 24px 26px; color:#fff; background:#0b0b0b; border:1px solid #292929; }
+        .product-category h2 { margin:0 0 18px; font:700 clamp(25px,3vw,42px)/.95 'Century Schoolbook',Georgia,serif; letter-spacing:-.05em; }
+        .product-strip { display:flex; gap:14px; overflow-x:auto; padding:2px 2px 12px; scrollbar-color:#777 #171717; }
+        .shop-product { position:relative; flex:0 0 190px; height:240px; overflow:hidden; background:#111; border:1px solid #444; cursor:pointer; transform-style:preserve-3d; will-change:transform; transition:transform .12s ease,box-shadow .12s ease; }
+        .shop-product img { display:none; }
+        .shop-product::before { content:'Product image\A placeholder'; white-space:pre; position:absolute; inset:0; display:grid; place-items:center; color:#777; background:linear-gradient(135deg,#252525,#111); font:11px/1.5 'Space Mono','Courier New',monospace; text-align:center; }
+        .product-category:nth-child(2) .shop-product:nth-child(1)::before { content:''; background:url('sketchbook.jpg') center/cover no-repeat; }
+        .product-category:nth-child(2) .shop-product:nth-child(2)::before { content:''; background:url('colorpen.jpg') center/cover no-repeat; }
+        .product-category:nth-child(2) .shop-product:nth-child(3)::before { content:''; background:url('paintbrush.jpg') center/cover no-repeat; }
+        .product-category:nth-child(2) .shop-product:nth-child(4)::before { content:''; background:url('refbook.png') center/cover no-repeat; }
+        .product-category:nth-child(2) .shop-product:nth-child(5)::before { content:''; background:url('canvas.jpg') center/cover no-repeat; }
+        .product-category:nth-child(3) .shop-product:nth-child(1)::before { content:''; background:url('water.png') center/cover no-repeat; }
+        .product-category:nth-child(3) .shop-product:nth-child(2)::before { content:''; background:url('bird.png') center/cover no-repeat; }
+        .product-category:nth-child(3) .shop-product:nth-child(3)::before { content:''; background:url('flower.png') center/cover no-repeat; }
+        .product-category:nth-child(4) .shop-product:nth-child(1)::before { content:''; background:url('selmer.png') center/cover no-repeat; }
+        .product-category:nth-child(4) .shop-product:nth-child(2)::before { content:''; background:url('keyboardmini.jpg') center/cover no-repeat; }
+        .product-category:nth-child(4) .shop-product:nth-child(3)::before { content:''; background:url('violin.jpg') center/cover no-repeat; }
+        .product-category:nth-child(4) .shop-product:nth-child(4)::before { content:''; background:url('neumann.jpg') center/cover no-repeat; }
+        .product-category:nth-child(4) .shop-product:nth-child(5)::before { content:''; background:url('gretsch.jpg') center/cover no-repeat; }
+        .product-category:nth-child(4) .shop-product:nth-child(6)::before { content:''; background:url('maestro.webp') center/cover no-repeat; }
+        .product-category:nth-child(4) .shop-product:nth-child(7)::before { content:''; background:url('112v.jpg') center/cover no-repeat; }
+        .shop-product:hover::before { color:#aaa; background:linear-gradient(135deg,#303030,#151515); }
+        .product-category:nth-child(2) .shop-product:nth-child(1):hover::before { background:url('sketchbook.jpg') center/cover no-repeat; }
+        .product-category:nth-child(2) .shop-product:nth-child(2):hover::before { background:url('colorpen.jpg') center/cover no-repeat; }
+        .product-category:nth-child(2) .shop-product:nth-child(3):hover::before { background:url('paintbrush.jpg') center/cover no-repeat; }
+        .product-category:nth-child(2) .shop-product:nth-child(4):hover::before { background:url('refbook.png') center/cover no-repeat; }
+        .product-category:nth-child(2) .shop-product:nth-child(5):hover::before { background:url('canvas.jpg') center/cover no-repeat; }
+        .product-category:nth-child(3) .shop-product:nth-child(1):hover::before { background:url('water.png') center/cover no-repeat; }
+        .product-category:nth-child(3) .shop-product:nth-child(2):hover::before { background:url('bird.png') center/cover no-repeat; }
+        .product-category:nth-child(3) .shop-product:nth-child(3):hover::before { background:url('flower.png') center/cover no-repeat; }
+        .product-category:nth-child(4) .shop-product:nth-child(1):hover::before { background:url('selmer.png') center/cover no-repeat; }
+        .product-category:nth-child(4) .shop-product:nth-child(2):hover::before { background:url('keyboardmini.jpg') center/cover no-repeat; }
+        .product-category:nth-child(4) .shop-product:nth-child(3):hover::before { background:url('violin.jpg') center/cover no-repeat; }
+        .product-category:nth-child(4) .shop-product:nth-child(4):hover::before { background:url('neumann.jpg') center/cover no-repeat; }
+        .product-category:nth-child(4) .shop-product:nth-child(5):hover::before { background:url('gretsch.jpg') center/cover no-repeat; }
+        .product-category:nth-child(4) .shop-product:nth-child(6):hover::before { background:url('maestro.webp') center/cover no-repeat; }
+        .product-category:nth-child(4) .shop-product:nth-child(7):hover::before { background:url('112v.jpg') center/cover no-repeat; }
+        .favorite-product::before, .favorite-product:hover::before { content:''; background:var(--favorite-image) center/cover no-repeat; }
+        .shop-product::after { content:''; position:absolute; z-index:1; inset:35% 0 0; pointer-events:none; background:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.18) 22%,rgba(0,0,0,.9) 100%); }
+        .shop-product-name { position:absolute; z-index:2; left:12px; right:12px; bottom:12px; color:#fff; font:14px 'Century Schoolbook',Georgia,serif; text-shadow:0 1px 4px #000; }
+        .product-hover { display:none; }
+        .product-hover h3 { font:700 19px/.95 'Century Schoolbook',Georgia,serif; }
+        .product-hover p { color:#d1d1d1; font:11px/1.35 'Space Mono','Courier New',monospace; }
+        .product-purchase, .product-exit { padding:9px 16px; border:1px solid #fff; border-radius:999px; font:10px 'Space Mono','Courier New',monospace; cursor:pointer; }
+        .favorites-empty { margin:0; color:#777; font:12px 'Space Mono','Courier New',monospace; }
+        .favorite-remove { position:absolute; z-index:3; top:8px; right:8px; padding:5px 8px; color:#fff; background:#e00000; border:1px solid #fff; border-radius:999px; font:10px 'Space Mono','Courier New',monospace; cursor:pointer; }
+        .favorite-remove:hover { color:#e00000; background:#fff; }
+        .product-purchase { color:#111; background:#fff; text-decoration:none; }
+        .product-purchase:hover { color:#fff; background:#e00000; border-color:#e00000; }
+        .product-exit { color:#fff; background:transparent; }
+        .product-exit:hover { color:#111; background:#fff; }
+        .product-modal { position:fixed; z-index:60; inset:0; display:grid; place-items:center; padding:32px; background:linear-gradient(rgba(0,0,0,.72),rgba(0,0,0,.84)),url('natureflat.gif'); background-size:cover; background-position:center; opacity:0; visibility:hidden; pointer-events:none; transition:opacity .25s ease,visibility .25s ease; }
+        .product-modal.is-visible { opacity:1; visibility:visible; pointer-events:auto; }
+        .product-modal-panel { display:grid; grid-template-columns:minmax(180px, .8fr) 1.2fr; gap:28px; width:min(820px,100%); padding:30px; color:#fff; background:rgba(10,10,10,.92); border:1px solid #555; box-shadow:0 20px 60px rgba(0,0,0,.8); }
+        .product-modal-image { width:100%; height:300px; object-fit:cover; background:#111; }
+        .product-modal-copy { display:flex; flex-direction:column; justify-content:center; }
+        .product-modal-copy h2 { margin-bottom:16px; font:700 clamp(32px,5vw,62px)/.9 'PT Serif',Georgia,serif; }
+        .product-modal-copy p { color:#ddd; font:16px/1.45 'PT Serif',Georgia,serif; }
+        .product-modal-actions { display:flex; align-items:center; gap:12px; margin-top:26px; }
+        .product-modal-buy, .product-modal-close { padding:11px 24px; border-radius:999px; font:11px 'Space Mono','Courier New',monospace; cursor:pointer; text-decoration:none; }
+        .product-modal-buy { color:#111; background:#fff; border:1px solid #fff; }
+        .product-modal-buy:hover { color:#fff; background:#e00000; border-color:#e00000; }
+        .product-modal-close { color:#fff; background:transparent; border:1px solid #777; }
+        .product-modal-close:hover { color:#111; background:#fff; border-color:#fff; }
+        .product-modal { display:block; padding:0; background:transparent; }
+        .product-modal-panel { position:absolute; top:28px; right:24px; display:block; width:min(470px,calc(100% - 48px)); min-height:calc(100vh - 56px); max-height:calc(100vh - 56px); overflow:auto; padding:16px; background:#202020; border:1px solid #333; border-radius:10px; }
+        .product-modal-image { display:block; height:365px; margin-bottom:22px; background:#06214f; border-radius:6px; }
+        .product-modal-copy h2 { margin-bottom:16px; color:#fff; font-size:42px; letter-spacing:-.04em; }
+        .product-modal-copy p { color:#fff; font-size:17px; line-height:1.5; }
+        .product-modal-copy p:not(.product-modal-price) { margin-bottom:18px; }
+        .product-modal-price { padding-top:14px; border-top:2px dotted #fff; font:22px/1.2 'Space Mono','Courier New',monospace !important; }
+        .product-modal-actions { gap:12px; margin-top:26px; }
+        .product-modal-buy, .product-modal-close, .product-modal-cart, .product-modal-ask, .product-modal-checkout { padding:12px 20px; color:#111; background:#fff; border:1px solid #fff; border-radius:5px; font:13px 'Space Mono','Courier New',monospace; cursor:pointer; text-decoration:none; }
+        .product-modal-buy, .product-modal-close { display:none; }
+        .product-modal-cart:hover, .product-modal-ask:hover, .product-modal-checkout:hover { color:#fff; background:#06214f; border-color:#06214f; }
+        .cart-fab { position:fixed; z-index:55; left:16px; bottom:16px; min-width:118px; height:54px; padding:0 18px; color:#fff; background:#ff0b0b; border:0; border-radius:999px; font:700 14px 'Helvetica Neue',Arial,sans-serif; cursor:pointer; opacity:0; transform:translateY(12px); pointer-events:none; transition:opacity .25s ease,transform .25s ease,background .2s ease,color .2s ease; }
+        .cart-fab.has-items { color:#111; background:#fff; }
+        .cart-fab.is-visible { opacity:1; transform:translateY(0); pointer-events:auto; }
+        .cart-fab:hover { background:#d90000; }
+        .cart-modal { position:fixed; z-index:70; inset:0; display:grid; place-items:start center; overflow:auto; padding:20px; background:rgba(0,0,0,.72); opacity:0; visibility:hidden; pointer-events:none; transition:opacity .2s ease,visibility .2s ease; scrollbar-width:none; -ms-overflow-style:none; }
+        .cart-modal::-webkit-scrollbar { display:none; width:0; height:0; }
+        .cart-modal.is-visible { opacity:1; visibility:visible; pointer-events:auto; }
+        .cart-panel { position:relative; box-sizing:border-box; width:min(680px,calc(100% - 30px)); min-height:720px; max-height:none; overflow:visible; padding:100px 180px 90px; color:#111; background-color:transparent; background-image:url('cartbg.png'); background-position:center; background-size:100% 100%; background-repeat:no-repeat; border:0; border-radius:0; box-shadow:none; scrollbar-width:none; -ms-overflow-style:none; }
+        .cart-panel::-webkit-scrollbar { display:none; width:0; height:0; }
+        .cart-panel h2 { margin-bottom:28px; text-align:center; font:700 clamp(36px,5vw,44px)/.9 'PT Serif',Georgia,serif; letter-spacing:-.06em; }
+        .cart-close { position:absolute; top:82px; right:124px; width:28px; height:28px; color:#fff; background:#111; border:0; border-radius:50%; font:700 16px/28px Arial,sans-serif; cursor:pointer; }
+        .cart-items { display:flex; flex-direction:column; gap:0; overflow-x:hidden; padding-bottom:12px; }
+        .cart-item { flex:1 0 100%; min-height:0; padding:10px 0; color:#111; background:transparent; border-bottom:1px dotted #111; border-radius:0; }
+        .cart-item strong { display:flex; align-items:baseline; justify-content:space-between; gap:8px; min-height:0; margin-bottom:7px; font:11px/1.15 'Space Mono','Courier New',monospace; }
+        .cart-item span { color:#111; font:11px/1.3 'Space Mono','Courier New',monospace; }
+        .cart-item-controls { display:flex; align-items:center; gap:8px; margin-top:18px; }
+        .cart-item-controls button { width:28px; height:28px; color:#fff; background:#111; border:0; border-radius:0; font:700 17px/1 Arial,sans-serif; cursor:pointer; }
+        .cart-item-controls button:hover { color:#fff; background:#06214f; }
+        .cart-item-total { float:none; white-space:nowrap; font:11px 'Space Mono','Courier New',monospace; }
+        .cart-empty { color:#bbb; font:13px 'Space Mono','Courier New',monospace; }
+        .cart-total { margin-top:22px; padding-top:14px; border-top:2px dotted #111; text-align:right; font:16px 'Space Mono','Courier New',monospace; }
+        .cart-checkout { display:block; width:max-content; margin:22px auto 0; padding:12px 24px; color:#fff; background:#111; border:1px solid #111; border-radius:0; font:13px 'Space Mono','Courier New',monospace; cursor:pointer; }
+        .cart-checkout:hover { color:#fff; background:#06214f; border-color:#06214f; }
+        @media (max-width:700px) { .cart-panel { width:calc(100% - 20px); min-height:620px; padding:80px 60px 70px; } .cart-close { top:52px; right:46px; } }
+        @media (max-width:700px) { .shop-banner { min-height:100svh; padding:30px 22px 10vh; } .shop-wordmark { gap:10px; } .shop-banner h1 { font-size:clamp(100px,27vw,190px); } .shop-banner span { font-size:28px; } .shop-grid { grid-template-columns:1fr; width:92%; } .gallery-copy { width:92%; height:240px; padding:20px 12px; margin:32px auto; } .gallery-copy-landing { grid-template-columns:1fr 1fr; gap:18px; } .gallery-copy-landing h2 { font-size:38px; } .gallery-copy-landing h2:last-child { text-align:right; } .product-categories { width:92%; margin-top:32px; } .product-category { padding:18px 14px 20px; } .shop-product { flex-basis:165px; height:220px; } .product-modal { padding:16px; } .product-modal-panel { grid-template-columns:1fr; padding:20px; } .product-modal-image { height:220px; } .gallery-copy-overlay { padding:16px; } .gallery-copy-panel { height:90vh; padding:16px; } .gallery-copy-close { top:12px; right:12px; padding:9px 17px; } }
+    </style>
+</head>
+<body class="shop-page">
+    <audio id="site-audio" loop preload="auto" autoplay>
+        <source src="song.mp3" type="audio/mpeg">
+    </audio>
+    <main class="shop-banner" aria-labelledby="shop-title">
+        <button class="audio-toggle" type="button" aria-label="Putar atau hentikan musik" aria-pressed="false">Musik berhenti</button>
+        <a class="shop-home-button" href="index.html">Beranda</a>
+        <div class="shop-wordmark"><h1 id="shop-title">Atelier</h1><span>Shop</span></div>
+    </main>
+
+    <section class="gallery-copy" aria-label="Interactive museum media">
+        <div class="gallery-copy-landing">
+            <h2>Toko<br>Seni</h2>
+            <h2>Atelier<br>Art Shop</h2>
+        </div>
+    </section>
+
+    <section class="product-categories" aria-label="Product categories">
+        <article class="product-category favorites-category">
+            <h2>Favorites</h2>
+            <div class="product-strip" id="favorites-strip"><p class="favorites-empty">Belum ada produk favorit.</p></div>
+        </article>
+        <article class="product-category">
+            <h2>Art supplies</h2>
+            <div class="product-strip">
+                <article class="shop-product"><img src="sketchbook.jpg" alt="Sketchbook"><span class="shop-product-name">Sketchbook</span><div class="product-hover"><h3>Sketchbook</h3><p>Heavyweight paper for studies, notes, and ideas.</p><a class="product-purchase" href="#">Purchase</a><button class="product-exit" type="button">Exit</button></div></article>
+                <article class="shop-product"><img src="colorpen.jpg" alt="Pensil Warna"><span class="shop-product-name">Pensil Warna</span><div class="product-hover"><h3>Pensil Warna</h3><p>Pensil warna watercolor premium.</p><a class="product-purchase" href="#">Purchase</a><button class="product-exit" type="button">Exit</button></div></article>
+                <article class="shop-product"><img src="paintbrush.jpg" alt="Kuas Mewarnai"><span class="shop-product-name">Kuas Mewarnai</span><div class="product-hover"><h3>Kuas Mewarnai</h3><p>Medium yang memberikan kehidupan pada ide ekspresi kreatif.</p><a class="product-purchase" href="#">Purchase</a><button class="product-exit" type="button">Exit</button></div></article>
+                <article class="shop-product"><img src="refbook.png" alt="Buku Referensi"><span class="shop-product-name">Buku Referensi</span><div class="product-hover"><h3>Buku Referensi</h3><p>Referensi visual untuk ide dan inspirasi seni.</p><a class="product-purchase" href="#">Purchase</a><button class="product-exit" type="button">Exit</button></div></article>
+                <article class="shop-product"><img src="canvas.jpg" alt="Kanvas"><span class="shop-product-name">Kanvas</span><div class="product-hover"><h3>Kanvas</h3><p>Alas menggambar dan ekspresi kreatif.</p><a class="product-purchase" href="#">Purchase</a><button class="product-exit" type="button">Exit</button></div></article>
+            </div>
+        </article>
+        <article class="product-category">
+            <h2>Curated art</h2>
+            <div class="product-strip">
+                <article class="shop-product"><img src="water.png" alt="Water artwork"><span class="shop-product-name">"Water And Waves"</span><div class="product-hover"><h3>Air dan Ombak</h3><p>Gambaran Kapal di atas air laut yang bergelora.</p><a class="product-purchase" href="#">Purchase</a><button class="product-exit" type="button">Exit</button></div></article>
+                <article class="shop-product"><img src="bird.png" alt="Bird artwork"><span class="shop-product-name">"Scorched Bird"</span><div class="product-hover"><h3>Burung Terbakar</h3><p>Burung yang hinggap pada pohon di lingkungan yang sudah hancur.</p><a class="product-purchase" href="#">Purchase</a><button class="product-exit" type="button">Exit</button></div></article>
+                <article class="shop-product"><img src="flower.png" alt="Flower artwork"><span class="shop-product-name">"Red Flower"</span><div class="product-hover"><h3>Bunga Merah</h3><p>Bunga dalam pot yang berwarna merah, itu saja.</p><a class="product-purchase" href="#">Purchase</a><button class="product-exit" type="button">Exit</button></div></article>
+            </div>
+        </article>
+        <article class="product-category">
+            <h2>Instrumen Musik</h2>
+            <div class="product-strip">
+                <article class="shop-product"><img src="selmer.png" alt="Selmer Paris Supreme"><span class="shop-product-name">Selmer Paris Supreme</span><div class="product-hover"><h3>Selmer Paris Supreme</h3><p>Saxophone premium buatan Selmer dengan desain klasik yang sangat unik.</p><a class="product-purchase" href="#">Purchase</a><button class="product-exit" type="button">Exit</button></div></article>
+                <article class="shop-product"><img src="keyboardmini.jpg" alt="Keyboard Kecil"><span class="shop-product-name">Keyboard Kecil</span><div class="product-hover"><h3>Keyboard Kecil</h3><p>Keyboard portabel untuk membawa ide musik kemanapun berada.</p><a class="product-purchase" href="#">Purchase</a><button class="product-exit" type="button">Exit</button></div></article>
+                <article class="shop-product"><img src="violin.jpg" alt="Cavalier CV6 violin"><span class="shop-product-name">Cavalier CV6</span><div class="product-hover"><h3>Cavalier CV6</h3><p>Biola yang sering dipakai pemula dan pelajar, dengan ukuran 1/4.</p><a class="product-purchase" href="#">Purchase</a><button class="product-exit" type="button">Exit</button></div></article>
+                <article class="shop-product"><img src="neumann.jpg" alt="Neumann U87 Ai"><span class="shop-product-name">Neumann U87 Ai</span><div class="product-hover"><h3>Neumann U87 Ai</h3><p>Produksi musik dan suara dengan kualitas premium untuk kepercayaan lebih tinggi.</p><a class="product-purchase" href="#">Purchase</a><button class="product-exit" type="button">Exit</button></div></article>
+                <article class="shop-product"><img src="gretsch.jpg" alt="Drum Gretsch USA Custom"><span class="shop-product-name">Drum Grestch USA Custom</span><div class="product-hover"><h3>Drum Grestch USA Custom</h3><p>Drum luar negeri yang premium dan handmade dengan suara Grestch yang klasik serta unik.</p><a class="product-purchase" href="#">Purchase</a><button class="product-exit" type="button">Exit</button></div></article>
+                <article class="shop-product"><img src="maestro.webp" alt="Maestro Handpan"><span class="shop-product-name">Maestro Handpan</span><div class="product-hover"><h3>Maestro Handpan</h3><p>Alat musik unik yang mampu menghasilkan suara mirip manusia, produksi Maestro.</p><a class="product-purchase" href="#">Purchase</a><button class="product-exit" type="button">Exit</button></div></article>
+                <article class="shop-product"><img src="112v.jpg" alt="Yamaha Pacifica 112V"><span class="shop-product-name">Yamaha Pacifica 112V</span><div class="product-hover"><h3>Yamaha Pacifica 112V</h3><p>Gitar listrik populer yang sering digunakan pemula, produksi Yamaha.</p><a class="product-purchase" href="#">Purchase</a><button class="product-exit" type="button">Exit</button></div></article>
+            </div>
+        </article>
+    </section>
+
+    <div class="product-modal" id="product-modal" aria-hidden="true">
+        <section class="product-modal-panel" role="dialog" aria-modal="true" aria-labelledby="product-modal-title">
+            <img class="product-modal-image" id="product-modal-image" src="" alt="">
+            <div class="product-modal-copy">
+                <h2 id="product-modal-title">Product</h2>
+                <p id="product-modal-description">Product description.</p>
+                <p class="product-modal-price" id="product-modal-price">Rp 100.000</p>
+                <div class="product-modal-actions">
+                    <button class="product-modal-cart" id="product-modal-cart" type="button" aria-label="Add one to keranjang">+</button>
+                    <button class="product-modal-ask" id="product-modal-favorite" type="button">Favorite</button>
+                    <button class="product-modal-checkout" id="product-modal-checkout" type="button">Checkout</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <button class="cart-fab" id="cart-fab" type="button" aria-label="Buka Keranjang">Keranjang</button>
+    <div class="cart-modal" id="cart-modal" aria-hidden="true">
+        <section class="cart-panel" role="dialog" aria-modal="true" aria-labelledby="cart-title">
+            <button class="cart-close" id="cart-close" type="button" aria-label="Close keranjang">×</button>
+            <h2 id="cart-title">Keranjang</h2>
+            <div class="cart-items" id="cart-items"><p class="cart-empty">Keranjang anda kosong.</p></div>
+            <div class="cart-total" id="cart-total">Total: Rp 0</div>
+            <button class="cart-checkout" id="cart-checkout" type="button">Checkout</button>
+        </section>
+    </div>
+
+    <script>
+        (() => {
+            const modal = document.getElementById('product-modal');
+            const modalImage = document.getElementById('product-modal-image');
+            const modalTitle = document.getElementById('product-modal-title');
+            const modalDescription = document.getElementById('product-modal-description');
+            const modalPrice = document.getElementById('product-modal-price');
+            const modalCart = document.getElementById('product-modal-cart');
+            const modalFavorite = document.getElementById('product-modal-favorite');
+            const modalCheckout = document.getElementById('product-modal-checkout');
+            const cartFab = document.getElementById('cart-fab');
+            const cartModal = document.getElementById('cart-modal');
+            const cartClose = document.getElementById('cart-close');
+            const cartItems = document.getElementById('cart-items');
+            const cartTotal = document.getElementById('cart-total');
+            const cartCheckout = document.getElementById('cart-checkout');
+            const favoritesStrip = document.getElementById('favorites-strip');
+            const banner = document.querySelector('.shop-banner');
+            const placeholder = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22 viewBox=%220 0 600 400%22%3E%3Crect width=%22600%22 height=%22400%22 fill=%22%2306214f%22/%3E%3Ctext x=%22300%22 y=%22205%22 fill=%22%23ffffff%22 font-family=%22monospace%22 font-size=%2220%22 text-anchor=%22middle%22%3EProduct image placeholder%3C/text%3E%3C/svg%3E';
+            let selectedProduct = null;
+            let cart = JSON.parse(localStorage.getItem('atelier-cart') || '[]');
+            const placeholderPrices = [
+                [100000, 125000, 150000, 220000, 300000],
+                [450000, 650000, 850000, 275000, 1200000, 575000, 725000, 325000, 250000, 390000],
+                [950000, 1800000, 2400000, 650000, 3200000, 875000, 1450000, 2100000, 2750000, 525000]
+            ];
+            const formatPrice = (value) => `Rp ${Number(value || 100000).toLocaleString('id-ID')}`;
+            const getProductPrice = (product) => {
+                const strip = product.closest('.product-strip');
+                const category = [...document.querySelectorAll('.product-category:not(.favorites-category) .product-strip')].indexOf(strip);
+                const index = [...strip.querySelectorAll('.shop-product')].indexOf(product);
+                return placeholderPrices[category]?.[index] || 100000;
+            };
+            let favorites = JSON.parse(localStorage.getItem('atelier-favorites') || '[]');
+            const saveFavorites = () => localStorage.setItem('atelier-favorites', JSON.stringify(favorites));
+            const openFavoriteProduct = (product) => {
+                selectedProduct = product;
+                modalImage.src = ['sketchbook.jpg', 'colorpen.jpg', 'paintbrush.jpg', 'refbook.png', 'canvas.jpg', 'water.png', 'bird.png', 'flower.png', 'selmer.png', 'violin.jpg', 'keyboardmini.jpg', 'neumann.jpg', 'gretsch.jpg', 'maestro.webp', '112v.jpg'].includes(product.image) ? product.image : placeholder;
+                modalImage.alt = `Placeholder for ${product.name}`;
+                modalTitle.textContent = product.name;
+                modalDescription.textContent = product.description;
+                modalPrice.textContent = formatPrice(product.price);
+                modal.classList.add('is-visible');
+                modal.setAttribute('aria-hidden', 'false');
+            };
+            const renderFavorites = () => {
+                favoritesStrip.innerHTML = '';
+                if (!favorites.length) {
+                    favoritesStrip.innerHTML = '<p class="favorites-empty">Belum ada produk favorit.</p>';
+                    return;
+                }
+                favorites.forEach((item) => {
+                    const card = document.createElement('article');
+                    card.className = 'shop-product favorite-product';
+                    card.style.setProperty('--favorite-image', `url("${item.image || 'aboutuspaint.png'}")`);
+                    card.innerHTML = `<span class="shop-product-name">${item.name}</span><button class="favorite-remove" type="button" aria-label="Hapus ${item.name} dari favorit">Hapus</button>`;
+                    card.addEventListener('click', (event) => {
+                        if (event.target.closest('.favorite-remove')) return;
+                        openFavoriteProduct(item);
+                    });
+                    card.querySelector('.favorite-remove').addEventListener('click', (event) => {
+                        event.stopPropagation();
+                        favorites = favorites.filter((favorite) => favorite.name !== item.name);
+                        saveFavorites();
+                        renderFavorites();
+                    });
+                    favoritesStrip.appendChild(card);
+                });
+            };
+            const saveCart = () => localStorage.setItem('atelier-cart', JSON.stringify(cart));
+            const updateCartFab = () => cartFab.classList.toggle('has-items', cart.length > 0);
+            const renderCart = () => {
+                cartItems.innerHTML = '';
+                if (!cart.length) {
+                    cartItems.innerHTML = '<p class="cart-empty">Your cart is empty.</p>';
+                    cartTotal.textContent = 'Total: Rp 0';
+                    updateCartFab();
+                    return;
+                }
+                cart.forEach((item, index) => {
+                    const card = document.createElement('article');
+                    card.className = 'cart-item';
+                    card.innerHTML = `<strong>${item.name}</strong><span>Jumlah: ${item.quantity}</span><div class="cart-item-controls"><button type="button" data-cart-action="decrease" data-cart-index="${index}" aria-label="Reduce ${item.name}">−</button><button type="button" data-cart-action="increase" data-cart-index="${index}" aria-label="Add ${item.name}">+</button></div>`;
+                    const price = Number(item.price || 100000);
+                    card.innerHTML = `<strong>${item.name}<span class="cart-item-total">${formatPrice(price * item.quantity)}</span></strong><span>${formatPrice(price)} each &middot; Jumlah: ${item.quantity}</span><div class="cart-item-controls"><button type="button" data-cart-action="decrease" data-cart-index="${index}" aria-label="Reduce ${item.name}">-</button><button type="button" data-cart-action="increase" data-cart-index="${index}" aria-label="Add ${item.name}">+</button></div>`;
+                    cartItems.appendChild(card);
+                });
+                const total = cart.reduce((sum, item) => sum + Number(item.price || 100000) * item.quantity, 0);
+                cartTotal.textContent = `Total: ${formatPrice(total)}`;
+                updateCartFab();
+            };
+            const openCart = () => {
+                renderCart();
+                cartModal.classList.add('is-visible');
+                cartModal.setAttribute('aria-hidden', 'false');
+            };
+            const closeCart = () => {
+                cartModal.classList.remove('is-visible');
+                cartModal.setAttribute('aria-hidden', 'true');
+            };
+            const closeModal = () => {
+                modal.classList.remove('is-visible');
+                modal.setAttribute('aria-hidden', 'true');
+            };
+            document.querySelectorAll('.shop-product').forEach((product) => {
+                product.addEventListener('click', (event) => {
+                    if (event.target.closest('a, button')) return;
+                    const title = product.querySelector('.shop-product-name');
+                    const description = product.querySelector('.product-hover p');
+                    const productImage = product.querySelector('img').getAttribute('src');
+                    selectedProduct = { name: title.textContent.trim(), description: description.textContent.trim(), price: getProductPrice(product), image: productImage };
+                    modalImage.src = ['sketchbook.jpg', 'colorpen.jpg', 'paintbrush.jpg', 'refbook.png', 'canvas.jpg', 'water.png', 'bird.png', 'flower.png', 'selmer.png', 'violin.jpg', 'keyboardmini.jpg', 'neumann.jpg', 'gretsch.jpg', 'maestro.webp', '112v.jpg'].includes(productImage) ? productImage : placeholder;
+                    modalImage.alt = `Placeholder for ${title.textContent}`;
+                    modalTitle.textContent = title.textContent;
+                    modalDescription.textContent = description.textContent;
+                    modalPrice.textContent = formatPrice(selectedProduct.price);
+                    modal.classList.add('is-visible');
+                    modal.setAttribute('aria-hidden', 'false');
+                });
+                product.addEventListener('mousemove', (event) => {
+                    const bounds = product.getBoundingClientRect();
+                    const x = (event.clientX - bounds.left) / bounds.width - .5;
+                    const y = (event.clientY - bounds.top) / bounds.height - .5;
+                    product.style.transform = `perspective(500px) rotateX(${y * -26}deg) rotateY(${x * 26}deg)`;
+                    product.style.boxShadow = `${x * -24}px ${y * 24 + 14}px 32px rgba(0,0,0,.58)`;
+                });
+                product.addEventListener('mouseleave', () => {
+                    product.style.transform = '';
+                    product.style.boxShadow = '';
+                });
+            });
+            modalFavorite.addEventListener('click', () => {
+                if (!selectedProduct || favorites.some((item) => item.name === selectedProduct.name)) return;
+                favorites.push({ ...selectedProduct });
+                saveFavorites();
+                renderFavorites();
+                modalFavorite.textContent = 'Favorited';
+            });
+            modalCart.addEventListener('click', () => {
+                if (!selectedProduct) return;
+                const existing = cart.find((item) => item.name === selectedProduct.name);
+                if (existing) { existing.quantity += 1; existing.price = selectedProduct.price; }
+                else cart.push({ ...selectedProduct, quantity: 1 });
+                saveCart();
+                renderCart();
+                closeModal();
+                openCart();
+            });
+            cartItems.addEventListener('click', (event) => {
+                const button = event.target.closest('[data-cart-action]');
+                if (!button) return;
+                const index = Number(button.dataset.cartIndex);
+                const item = cart[index];
+                if (!item) return;
+                if (button.dataset.cartAction === 'increase') item.quantity += 1;
+                if (button.dataset.cartAction === 'decrease') item.quantity -= 1;
+                if (item.quantity <= 0) cart.splice(index, 1);
+                saveCart();
+                renderCart();
+            });
+            modalCheckout.addEventListener('click', openCart);
+            cartFab.addEventListener('click', openCart);
+            cartClose.addEventListener('click', closeCart);
+            cartCheckout.addEventListener('click', () => { window.location.href = 'checkout.html'; });
+            window.addEventListener('scroll', () => {
+                cartFab.classList.toggle('is-visible', window.scrollY > banner.offsetHeight * .65);
+            }, { passive: true });
+            modal.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
+            cartModal.addEventListener('click', (event) => { if (event.target === cartModal) closeCart(); });
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') { closeModal(); closeCart(); }
+            });
+            renderCart();
+            renderFavorites();
+        })();
+    </script>
+
+    <script>
+        document.querySelectorAll('.product-exit').forEach((button) => {
+            button.addEventListener('click', (event) => {
+                event.stopPropagation();
+                button.closest('.shop-product').classList.add('is-dismissed');
+            });
+        });
+        document.querySelectorAll('.shop-product').forEach((product) => {
+            product.addEventListener('mouseleave', () => product.classList.remove('is-dismissed'));
+        });
+    </script>
+
+    <div class="gallery-copy-overlay" id="gallery-copy-overlay" aria-hidden="true">
+        <section class="gallery-copy-panel" role="dialog" aria-modal="true" aria-label="Interactive Rollins Museum of Art">
+            <button class="gallery-copy-close" id="gallery-copy-close" type="button" aria-label="Close interactive museum">×</button>
+            <iframe src="https://my.matterport.com/show/?m=mAakjXhNDET" title="Rollins Museum of Art virtual exhibition tour" allow="fullscreen; xr-spatial-tracking" loading="lazy"></iframe>
+        </section>
+    </div>
+
+    <script>
+        (() => {
+            const openButton = document.getElementById('gallery-copy-open');
+            const overlay = document.getElementById('gallery-copy-overlay');
+            const closeButton = document.getElementById('gallery-copy-close');
+            if (!openButton) return;
+            const setOverlay = (visible) => {
+                overlay.classList.toggle('is-visible', visible);
+                overlay.setAttribute('aria-hidden', String(!visible));
+                document.body.style.overflow = visible ? 'hidden' : '';
+                if (visible) closeButton.focus();
+            };
+            openButton.addEventListener('click', () => setOverlay(true));
+            closeButton.addEventListener('click', () => setOverlay(false));
+            overlay.addEventListener('click', (event) => { if (event.target === overlay) setOverlay(false); });
+            document.addEventListener('keydown', (event) => { if (event.key === 'Escape') setOverlay(false); });
+        })();
+    </script>
+    <script>
+        (() => {
+            const audio = document.getElementById('site-audio');
+            const toggle = document.querySelector('.audio-toggle');
+            const savedState = localStorage.getItem('atelier-audio-muted') === 'true';
+            audio.muted = savedState;
+            const updateToggle = () => {
+                const playing = !audio.paused && !audio.muted;
+                toggle.classList.toggle('is-playing', playing);
+                toggle.textContent = playing ? 'Musik bermain' : 'Musik berhenti';
+                toggle.setAttribute('aria-pressed', String(playing));
+            };
+            const startAudio = () => { if (!audio.muted) audio.play().catch(() => {}); };
+            toggle.addEventListener('click', () => {
+                if (audio.paused || audio.muted) { audio.muted=false; localStorage.setItem('atelier-audio-muted','false'); startAudio(); }
+                else { audio.pause(); audio.muted=true; localStorage.setItem('atelier-audio-muted','true'); }
+                updateToggle();
+            });
+            document.addEventListener('pointerdown', startAudio, { once:true });
+            audio.addEventListener('play', updateToggle);
+            audio.addEventListener('pause', updateToggle);
+            startAudio(); updateToggle();
+        })();
+    </script>
+</body>
+</html>
