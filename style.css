@@ -131,7 +131,7 @@ main {
 }
 
 main::before {
-    content: '[ SYSTEM (1) ]';
+    content: none;
     position: absolute;
     top: 15px;
     right: 20px;
